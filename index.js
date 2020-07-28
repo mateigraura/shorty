@@ -29,7 +29,6 @@ app.use(express.json());
 const path = require("path");
 const notfoundPage = path.join(__dirname, "client/public/not-found.html");
 app.use(express.static(path.join(__dirname, "client/build")));
-// app.use(express.static(path.join(__dirname, "client/public")));
 
 app.get("/:slug", async (req, res) => {
     const { slug } = req.params;
