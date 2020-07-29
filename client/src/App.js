@@ -15,7 +15,7 @@ import {
 } from "react-bootstrap"
 
 
-const ListRow = ({ data, index }) => {
+const ListRow = ({ data, index, isXs }) => {
   const host = window.location.hostname;
 
   const copyToClipboard = (url) => {
@@ -31,15 +31,28 @@ const ListRow = ({ data, index }) => {
 
   return (
     <Row key={index} style={styles.listR}>
-      <Col md={{ span: 7 }}>
+      <Col
+        lg={{ span: 7, offset: 0 }}
+        md={{ span: 7, offset: 0 }}
+        sm={{ span: 6, offset: 0 }}
+        xs={{ span: 8, offset: 1 }}
+      >
         <a href={`${data.url}`} style={styles.link}>
           {data.url}
         </a>
       </Col>
-      <Col md={{ span: 4 }}>
-        <h6 style={styles.hCol}>{host}/{data.slug}</h6>
-      </Col>
-      <Col md={{ span: 1 }}>
+      {
+        !isXs &&
+        <Col
+          lg={{ span: 4 }}
+          md={{ span: 4 }}
+          sm={{ span: 5 }}
+          xs={{ span: 3 }}
+        >
+          <h6 style={styles.hCol}>{host}/{data.slug}</h6>
+        </Col>
+      }
+      <Col md={{ span: 1 }} sm={{ span: 1 }} xs={{ span: 2 }}>
         <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Copy to clipboard</Tooltip>}>
           <FaCopy
             key={index}
@@ -56,6 +69,7 @@ const ListRow = ({ data, index }) => {
 const App = () => {
   const [url, setUrl] = useState("");
   const [createdUrls, setCreatedUrls] = useState([]);
+  const [isXsScreen, setIsXsScreen] = useState(window.innerWidth < 575);
 
   useEffect(() => {
     const savedUrls = JSON.parse(localStorage.getItem('urls')) || [];
@@ -65,6 +79,15 @@ const App = () => {
     }
     // eslint-disable-next-line
   }, [])
+
+  useEffect(() => {
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  })
+
+  const onResize = () => {
+    setIsXsScreen(window.innerWidth < 575)
+  }
 
   const shortenUrl = async (e) => {
     e.preventDefault();
@@ -124,17 +147,29 @@ const App = () => {
 
   return (
     <Container>
-      <Row className="justify-content-center">
-        <Col style={styles.pane} md={{ span: 6, offset: 3 }} sm={{ span: 8, offset: 2 }}>
+      <Row>
+        <Col
+          style={styles.pane}
+          lg={{ span: 6, offset: 3 }}
+          md={{ span: 8, offset: 2 }}
+          sm={{ span: 10, offset: 1 }}
+        >
           <img style={styles.img} src={logo} height={110} width={80} alt="logo" />
-          <h1 style={styles.hTitle}>URL shortener</h1>
+          <h2 style={styles.hTitle}>URL shortener</h2>
         </Col>
       </Row>
       <Row>
-        <Col md={{ span: 6, offset: 3 }} sm={{ span: 8, offset: 2 }}>
+        <Col
+          lg={{ span: 6, offset: 3 }}
+          md={{ span: 8, offset: 2 }}
+          sm={{ span: 10, offset: 1 }}
+        >
           <Form style={styles.form}>
             <Form.Row className="align-items-center">
-              <Col md={{ span: 10 }}>
+              <Col
+                lg={{ span: 10 }}
+                md={{ span: 9 }}
+              >
                 <Form.Label htmlFor="inlineFormInput" srOnly>
                   Enter the url you want to shorten
                 </Form.Label>
@@ -145,7 +180,10 @@ const App = () => {
                   onChange={e => setUrl(e.target.value)}
                 />
               </Col>
-              <Col md={{ span: 2 }}>
+              <Col
+                lg={{ span: 2 }}
+                md={{ span: 3 }}
+              >
                 <Button
                   type="submit"
                   className="mb-2"
@@ -163,11 +201,16 @@ const App = () => {
       {
         createdUrls.length !== 0 &&
         <Row>
-          <Col md={{ span: 6, offset: 3 }}>
+          <Col
+            lg={{ span: 6, offset: 3 }}
+            md={{ span: 8, offset: 2 }}
+            sm={{ span: 10, offset: 1 }}
+            xs={{ span: 12 }}
+          >
             <ListGroup variant="flush" style={styles.listG}>
               {
                 createdUrls.map((data, i) => (
-                  <ListRow data={data} index={i} />
+                  <ListRow data={data} index={i} isXs={isXsScreen} />
                 ))
               }
             </ListGroup>
@@ -182,7 +225,9 @@ const App = () => {
 const styles = {
   pane: {
     marginTop: "8%",
-    padding: 0
+    padding: 0,
+    justifyContent: "center",
+    display: "flex"
   },
   form: {
     marginTop: 15,
@@ -194,7 +239,7 @@ const styles = {
     cursor: "pointer",
     color: "#7F8F95",
     marginBottom: 2,
-    marginLeft: 10
+    marginLeft: 10,
   },
   hCol: {
     color: "#7F8F95",
@@ -202,7 +247,7 @@ const styles = {
   link: {
     color: "#4088ed",
     display: "inline-block",
-    width: 250,
+    width: 200,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
