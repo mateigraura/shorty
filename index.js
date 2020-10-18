@@ -30,6 +30,10 @@ const path = require("path");
 const notfoundPage = path.join(__dirname, "client/public/not-found.html");
 app.use(express.static(path.join(__dirname, "client/build")));
 
+app.get("/ping", (req, res) => {
+    return res.json({status: "Alive"})
+})
+
 app.get("/:slug", async (req, res) => {
     const { slug } = req.params;
 

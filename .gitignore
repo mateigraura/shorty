@@ -9,6 +9,12 @@
 /.env
 .env
 
+.idea
+idea/*
+.idea
+.idea/
+idea/
+
 .DS_Store
 .env.local
 .env.development.local
